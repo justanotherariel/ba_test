@@ -1,4 +1,7 @@
-
+Fork from https://github.com/Pi4J/pi4j-example-minimal
+Used for testing purposes
+ 
+ 
  Pi4J V2 :: Java I/O Library for Raspberry Pi :: Minimal example application
 ==========================================================================
 
