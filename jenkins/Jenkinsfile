@@ -1,20 +1,25 @@
 node {
-  checkout scm
+    env.registry = 'http://10.0.0.20:5000'
 
-  docker.image('maven:3-jdk-11').inside('-u root -v /$HOME/.m2/:/root/.m2') {
-    stage('Build') {
-       sh 'mvn -B -DskipTests clean package'
-     }
+    checkout scm
 
-     stage('Test') {
-       sh 'mvn test'
-     }
+    docker.image('maven:3-jdk-11').inside('-u root -v /$HOME/.m2/:/root/.m2') {
+        stage('Build') {
+            sh 'mvn -B -DskipTests clean package'
+        }
 
-     stage('Print'){
-         sh 'ls'
-         sh 'pwd'
-     }
-  }
+        stage('Test') {
+            sh 'mvn test'
+        }
 
+        stage('Stash Distribution'){
+            stash includes: 'target/distribution/', name: 'DISTRIBUTION'
+        }
+    }
 
+    stage('Build Image'){
+        docker.withRegistry("${env.registry}") {
+            dockerImage = docker.build("example")
+        }
+    }
 }
