@@ -19,16 +19,16 @@ node {
 
     stage('Build Image'){
         docker.withRegistry("${env.registry}") {
-            dockerImage = docker.build("example")
+            dockerImage = docker.build("pi4j")
         }
     }
 
     stage('Push Image') {
-        sh "curl ${env.registry}/v2/example/tags/list"
+        sh "curl ${env.registry}/v2/pi4j/tags/list"
         docker.withRegistry("${env.registry}") {
             dockerImage.push("${env.BUILD_NUMBER}")
             dockerImage.push("latest")
         }
-        sh "curl ${env.registry}/v2/example/tags/list"
+        sh "curl ${env.registry}/v2/pi4j/tags/list"
     }
 }
