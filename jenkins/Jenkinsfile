@@ -20,7 +20,7 @@ pipeline {
 			steps {
 				sh 'mvn -B -DskipTests clean package'
 				// sh 'chmod +x ./jenkins/scripts/deliver.sh'
-				sh './target/distribution/run.sh'
+				// sh './target/distribution/run.sh'
 			}
 		}
 
