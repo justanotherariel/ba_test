@@ -1,7 +1,7 @@
 node {
   checkout scm
 
-  docker.image('node:10-alpine').withRun('-v /$HOME/.m2/:/root/.m2').inside {
+  docker.image('maven:3-jdk-11').withRun('-v /$HOME/.m2/:/root/.m2') {
     stage('Build') {
        sh 'mvn -B -DskipTests clean package'
      }
