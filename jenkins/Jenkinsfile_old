@@ -1,0 +1,67 @@
+pipeline {
+	environment {
+		registry = "http://10.0.0.20:5000" 
+		registryCredential = 'dockerhub'
+		dockerImage = ''
+
+	}
+	 
+	agent any
+	
+	stages {
+		stage('Build') {
+
+			agent {
+                docker { 
+					image 'maven:3-jdk-11'
+					args '-v /$HOME/.m2/:/root/.m2' 
+				}
+            }
+
+			steps {
+				sh 'mvn -B -DskipTests clean package'
+				// sh 'chmod +x ./jenkins/scripts/deliver.sh'
+				// sh './target/distribution/run.sh'
+				stash includes: 'target/my-app-1.0-SNAPSHOT.jar', name: 'ARTEFACT'
+			}
+		}
+
+		stage('Test') {
+
+			agent {
+                docker { 
+					image 'maven:3-jdk-11'
+					args '-v /$HOME/.m2/:/root/.m2' 
+				}
+            }
+
+			steps {
+                sh 'mvn test' 
+				stash includes: 'target/my-app-1.0-SNAPSHOT.jar', name: 'ARTEFACT'
+            }
+		}
+
+		stage('Build image') {
+			steps {
+				script{
+					docker.withRegistry(registry) {
+						dockerImage = docker.build ("example")
+					}
+				}
+			}	
+	  	}
+
+		stage('Push image to registry') {
+			steps{
+				sh "curl https://${registry}/v2/example/tags/list"
+				script{
+					docker.withRegistry(registry) {
+						dockerImage.push("${env.BUILD_NUMBER}")
+						dockerImage.push("latest")
+					}
+				}
+				sh "curl https://${registry}/v2/example/tags/list"
+			}
+		}
+	}	
+}
