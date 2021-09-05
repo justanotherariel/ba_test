@@ -1,4 +1,4 @@
-FROM java:8
+FROM java:9
 COPY ARTEFACT/target/my-app-1.0-SNAPSHOT.jar my-app-1.0-SNAPSHOT.jar
 EXPOSE 8083
 CMD ["java", "-jar", "my-app-1.0-SNAPSHOT.jar"]
