@@ -1,3 +1,3 @@
 FROM openjdk:11
-COPY DISTRIBUTION .
+COPY target/distribution .
 CMD ["./run.sh"]
