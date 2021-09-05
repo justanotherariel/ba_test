@@ -10,7 +10,7 @@ pipeline {
 		docker {
 			image 'maven:3'
 			args '-u root'
-			args '-v /root/.m2:/root/.m2'
+			// args '-v /root/.m2:/root/.m2'
 		}
 	}
 	
