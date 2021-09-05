@@ -22,4 +22,13 @@ node {
             dockerImage = docker.build("example")
         }
     }
+
+    stage('Push Image') {
+        sh 'curl https://${env.registry}/v2/example/tags/list'
+        docker.withRegistry("${env.registry}") {
+            dockerImage.push("${env.BUILD_NUMBER}")
+            dockerImage.push("latest")
+        }
+        sh 'curl https://${env.registry}/v2/example/tags/list'
+    }
 }
