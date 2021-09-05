@@ -1,0 +1,60 @@
+pipeline {
+	environment {
+		registry = "http://10.0.0.20:5000" 
+		registryCredential = 'dockerhub'
+		dockerImage = ''
+		dockerImage2 = ''
+
+	}
+	 
+	agent {
+		docker {
+			image 'maven:3-alpine'
+			args '-u root'
+		}
+	}
+	
+	stages {
+		stage('Build') {
+
+			steps {
+				sh 'mvn -B -DskipTests clean package'
+				sh './jenkins/scripts/deliver.sh'
+			}
+		}
+
+		stage('Test') {
+			steps {
+                sh 'mvn test' 
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml' 
+                }
+            }
+		}
+
+		stage('Build image') {
+			steps {
+				script{
+					docker.withRegistry(registry) {
+						dockerImage = docker.build ("example")
+					}
+				}
+			}	
+	  	}
+
+		stage('Push image to registry') {
+			steps{
+				sh "curl https://${registry}/v2/example/tags/list"
+				script{
+					docker.withRegistry(registry) {
+						dockerImage.push("${env.BUILD_NUMBER}")
+						dockerImage.push("latest")
+					}
+				}
+				sh "curl https://${registry}/v2/example/tags/list"
+			}
+		}
+	}	
+}
