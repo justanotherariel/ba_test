@@ -17,6 +17,12 @@ node {
         }
     }
 
+    stage('Print'){
+        sh 'ls'
+        sh 'pwd'
+        sh 'ls /'
+    }
+
     stage('Build Image'){
         docker.withRegistry("${env.registry}") {
             dockerImage = docker.build("example")
