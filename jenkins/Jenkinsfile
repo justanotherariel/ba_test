@@ -21,10 +21,9 @@ node {
 
     stage('Push Image') {
         sh "curl ${env.registry}/v2/pi4j/tags/list"
-        docker.withRegistry("${env.registry}") {
-            dockerImage.push("${env.BUILD_NUMBER}")
-            dockerImage.push("latest")
-        }
+
+        sh 'sudo docker buildx build --platform linux/arm/v7 -t 10.0.0.20:5000/pi4j:latest --output=type=registry,registry.insecure=true .'
+
         sh "curl ${env.registry}/v2/pi4j/tags/list"
     }
 }
