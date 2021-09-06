@@ -6,7 +6,7 @@ RUN apt-get update
 # Install Dependencies
 RUN apt-get install -y openjdk-11-jre
 RUN apt-get install -y python-setuptools python3-setuptools
-RUN apt-get install -y wget unzip make
+RUN apt-get install -y wget unzip make gcc
 
 # pigpio
 RUN wget https://github.com/joan2937/pigpio/archive/master.zip && \
