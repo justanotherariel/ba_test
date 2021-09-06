@@ -11,10 +11,6 @@ node {
         //stage('Test') {
         //    sh 'mvn test'
         //}
-
-        //stage('Stash Distribution'){
-        //    stash includes: 'target/distribution/', name: 'DISTRIBUTION'
-        //}
     }
 
     stage('Build Image'){
@@ -31,4 +27,8 @@ node {
         }
         sh "curl ${env.registry}/v2/pi4j/tags/list"
     }
+}
+
+node("k3s") {
+
 }
