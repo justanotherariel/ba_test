@@ -1,6 +1,10 @@
-node {
-    env.registry = 'http://10.0.0.20:5000'
+env.registry_protocol = 'http://'
+env.registry = '10.0.0.20:5000'
 
+env.image_name = 'example/pi4j'
+env.image_architecture = 'linux/arm/v7'
+
+node {
     checkout scm
 
     docker.image('maven:3-jdk-11').inside('-u root -v /$HOME/.m2/:/root/.m2') {
@@ -8,26 +12,39 @@ node {
             sh 'mvn -B -DskipTests clean package'
         }
 
-        //stage('Test') {
-        //    sh 'mvn test'
-        //}
-    }
-
-    stage('Build Image'){
-        docker.withRegistry("${env.registry}") {
-            dockerImage = docker.build("pi4j")
+        stage('Test') {
+            sh 'mvn test'
         }
     }
 
+    stage('Build Image'){
+
+        // Needed for multi-architecture builds. Sets up the qemu emulator
+        sh 'docker run --rm --privileged multiarch/qemu-user-static --reset -p yes'
+
+        sh "docker buildx build \
+        --platform ${env.image_architecture} \
+        -t distribution_image \
+        --load ."
+    }
+
     stage('Push Image') {
-        sh "curl ${env.registry}/v2/pi4j/tags/list"
+        sh "curl ${env.registry_protocol}${env.registry}/v2/pi4j/tags/list"
 
-        sh 'sudo docker buildx build --platform linux/arm/v7 -t 10.0.0.20:5000/pi4j:latest --output=type=registry,registry.insecure=true .'
+        sh "docker image tag distribution_image ${env.registry}/${env.image_name}:latest"
+        sh "docker push ${env.registry}/${env.image_name}:latest"
 
-        sh "curl ${env.registry}/v2/pi4j/tags/list"
+        sh "docker image tag distribution_image ${env.registry}/${env.image_name}:${env.BUILD_NUMBER}"
+        sh "docker push ${env.registry}/${env.image_name}:${env.BUILD_NUMBER}"
+
+        sh "curl ${env.registry_protocol}${env.registry}/v2/pi4j/tags/list"
     }
 }
 
 node("k3s") {
-
+    stage('Deploy') {
+        sh "pwd"
+        sh "ls"
+        // sh "kubectl appy -f "
+    }
 }
