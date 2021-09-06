@@ -2,9 +2,9 @@ FROM debian:11-slim
 
 
 # Install Dependencies
-RUN apt update && apt install -y openjdk-11-jre libpigpiod-if2-1
+RUN apt update && apt install -y openjdk-11-jre
 
-# USER 1000
+RUN docker/install_pigpio.sh
 
 # Copy and run program
 COPY target/distribution .
