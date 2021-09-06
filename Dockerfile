@@ -2,7 +2,7 @@ FROM debian:11-slim
 
 
 # Install Dependencies
-RUN apt update && apt install -y openjdk-11-jre pigpio
+RUN apt update && apt install -y openjdk-11-jre libpigpiod-if2-1
 
 USER 1000
 
