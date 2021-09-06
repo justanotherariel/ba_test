@@ -4,9 +4,6 @@ FROM debian:11-slim
 
 
 # Install Dependencies
-RUN apt-get update && apt-get install -y openjdk-11-jre \
-    && rm -rf /var/lib/apt/lists/*
-
 RUN <<-EOF
     apt-get update
 
@@ -28,6 +25,9 @@ RUN <<-EOF
     apt-get autoremove
     apt-get clean
 EOF
+
+RUN apt-get update && apt-get install -y openjdk-11-jre \
+    && rm -rf /var/lib/apt/lists/*
 
 # Run program
 COPY target/distribution .
