@@ -4,15 +4,8 @@ FROM debian:11-slim
 
 
 # Install JDK 11
-RUN <<-EOF
-    apt-get update && apt-get install -y --no-install-recommends apt-utils
-    apt-get install -y openjdk-11-jre
-
-    # Cleanup
-    apt-get autoremove
-    apt-get clean
-    rm -rf /var/lib/apt/lists/*
-EOF
+RUN apt-get update && apt-get install -y openjdk-11-jre \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install pigpio
 RUN <<-EOF
