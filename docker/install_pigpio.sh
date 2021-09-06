@@ -1,5 +1,7 @@
 #!/bin/sh
 
+apt-get update
+
 apt-get install -y wget unzip make gcc
 apt-get install -y python-setuptools python3-setuptools
 
