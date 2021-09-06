@@ -6,7 +6,7 @@ FROM debian:11-slim
 # Install JDK 11
 RUN <<-EOF
     apt-get update
-    
+
     apt-get install -y openjdk-11-jre
 
     # Cleanup
@@ -33,8 +33,8 @@ RUN <<-EOF
     rm master.zip
     rm -r pigpio-master
 
-    apt-get remove python-setuptools python3-setuptools
-    apt-get remove wget unzip make gcc
+    apt-get remove -y python-setuptools python3-setuptools
+    apt-get remove -y wget unzip make gcc
     apt-get autoremove
     apt-get clean
     rm -rf /var/lib/apt/lists/*
