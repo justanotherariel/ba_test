@@ -1,4 +1,12 @@
-# FROM openjdk:11
-FROM adoptopenjdk/openjdk11:armv7l-debianslim-jre-11.0.11_9
+FROM debian:latest
+
+# Update to latest packages
+RUN apt-get update
+
+# Install Dependencies
+RUN apt-get install -y openjdk-11-jre
+RUN apt-get install -y pigpio
+
+# Copy and run program
 COPY target/distribution .
 CMD ["./run.sh"]
