@@ -43,7 +43,7 @@ node {
 
 node("k3s") {
     stage('Deploy') {
-        sh "kubectl appy -f /home/k3s/pi4j_k3s/pi4j-example-deployment.yaml"
+        sh "kubectl apply -f /home/k3s/pi4j_k3s/pi4j-example-deployment.yaml"
         sh "kubectl get all"
     }
 }
