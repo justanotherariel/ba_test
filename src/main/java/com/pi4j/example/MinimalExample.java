@@ -135,6 +135,7 @@ public class MinimalExample {
         while (pressCount < 5) {
             if (led.equals(DigitalState.HIGH)) {
                 console.println("LED low");
+                console.println("Heyyy");
                 led.low();
                 Thread.sleep(5000);
             } else {
