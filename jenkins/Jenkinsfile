@@ -43,13 +43,6 @@ node {
 
 node("k3s") {
     stage('Deploy') {
-        sh(returnStdout: true, script: '''#!/bin/bash
-            DEP=$(sudo kubectl get deployments.v1.apps | grep 'pi4j-example')
-            if [  -n '$DEP' ]; then
-                sudo kubectl delete deployment.apps/pi4j-example
-                sleep 45
-            fi
-        '''.stripIndent())
         sh "kubectl apply -f /home/k3s/pi4j_k3s/pi4j-example-deployment.yaml"
         sh "kubectl get all"
     }
