@@ -137,6 +137,7 @@ public class MinimalExample {
                 console.println("LED low");
                 led.low();
                 Thread.sleep(500)
+                
             } else {
                 console.println("LED high");
                 led.high();
