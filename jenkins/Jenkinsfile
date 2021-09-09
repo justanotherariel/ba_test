@@ -29,7 +29,7 @@ node {
     }
 
     stage('Push Image') {
-        sh "curl ${env.registry_protocol}${env.registry}/v2/pi4j/tags/list"
+        sh "curl ${env.registry_protocol}${env.registry}/v2/${env.image_name}/tags/list"
 
         sh "docker image tag distribution_image ${env.registry}/${env.image_name}:latest"
         sh "docker push ${env.registry}/${env.image_name}:latest"
@@ -37,7 +37,7 @@ node {
         sh "docker image tag distribution_image ${env.registry}/${env.image_name}:${env.BUILD_NUMBER}"
         sh "docker push ${env.registry}/${env.image_name}:${env.BUILD_NUMBER}"
 
-        sh "curl ${env.registry_protocol}${env.registry}/v2/pi4j/tags/list"
+        sh "curl ${env.registry_protocol}${env.registry}/v2/${env.image_name}/list"
     }
 }
 
