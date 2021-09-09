@@ -57,3 +57,15 @@ COPY --from=pigpio_packager /usr/local /usr/local
 # Launch Program
 COPY target/distribution .
 CMD ["./run.sh"]
+
+# Jenkins Comment
+sh(returnStdout: true, script: '''#!/bin/bash
+    DEP=$(sudo kubectl get deployments.v1.apps | grep 'pi4j-example')
+    if [  -n '$DEP' ]; then
+        sudo kubectl delete deployment.apps/pi4j-example
+        while [ -n '$DEP' ] do
+            sleep 5
+            DEP=$(sudo kubectl get all | grep 'Terminating')
+        done
+    fi
+'''.stripIndent())

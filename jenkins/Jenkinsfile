@@ -47,7 +47,7 @@ node("k3s") {
             DEP=$(sudo kubectl get deployments.v1.apps | grep 'pi4j-example')
             if [  -n '$DEP' ]; then
                 sudo kubectl delete deployment.apps/pi4j-example
-                sleep 30
+                sleep 45
             fi
         '''.stripIndent())
         sh "kubectl apply -f /home/k3s/pi4j_k3s/pi4j-example-deployment.yaml"
