@@ -44,7 +44,7 @@ node {
 node("k3s") {
     stage('Deploy') {
         sh "kubectl delete deployment.apps/pi4j-example"
-        sh "sleep 10"
+        sh "sleep 20"
         sh "kubectl apply -f /home/k3s/pi4j_k3s/pi4j-example-deployment.yaml"
         sh "kubectl get all"
     }
