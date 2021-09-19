@@ -62,16 +62,16 @@ node("k3s") {
         sh "cat ./jenkins/kubernetes_deploy.yaml"   // Debug
 
         // Check for old deployment and delete if necessary
-        sh "DEP=$(sudo kubectl get deployments 2> /dev/null || true | grep '${env.deployment_name}')
-            POD=$(sudo kubectl get pods 2> /dev/null || true | grep '${env.deployment_name}')
+        sh "DEP=\$(sudo kubectl get deployments 2> /dev/null || true | grep '${env.deployment_name}')
+            POD=\$(sudo kubectl get pods 2> /dev/null || true | grep '${env.deployment_name}')
 
-            if [  -n \"$DEP\" ]; then
+            if [  -n \"\$DEP\" ]; then
             sudo kubectl delete deployment ${env.deployment_name}
             echo 'Deleting...'
-            while [ -n \"$POD\" ]; do
+            while [ -n \"\$POD\" ]; do
                 echo 'Not deleted! Continue...'
                 sleep 5
-                POD=$(sudo kubectl get pods 2> /dev/null || true | grep '${env.deployment_name}')
+                POD=\$(sudo kubectl get pods 2> /dev/null || true | grep '${env.deployment_name}')
             done
             fi"
 
