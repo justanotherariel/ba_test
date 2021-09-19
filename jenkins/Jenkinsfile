@@ -61,9 +61,19 @@ node("k3s") {
             ./jenkins/kubernetes_deploy.yaml"
         sh "cat ./jenkins/kubernetes_deploy.yaml"   // Debug
 
-        // Delete old deployment
-        sh "kubectl delete deployment ${env.deployment_name}"
-        sh "sleep ${env.deploy_delay}"
+        // Check for old deployment and delete if necessary
+        sh "DEP=$(sudo kubectl get deployments 2> /dev/null || true | grep '${env.deployment_name}')
+            POD=$(sudo kubectl get pods 2> /dev/null || true | grep '${env.deployment_name}')
+
+            if [  -n \"$DEP\" ]; then
+            sudo kubectl delete deployment ${env.deployment_name}
+            echo 'Deleting...'
+            while [ -n \"$POD\" ]; do
+                echo 'Not deleted! Continue...'
+                sleep 5
+                POD=$(sudo kubectl get pods 2> /dev/null || true | grep '${env.deployment_name}')
+            done
+            fi"
 
         // Apply new deployment to k3s cluster
         sh "kubectl apply -f ./jenkins/kubernetes_deploy.yaml"
