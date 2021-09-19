@@ -54,18 +54,17 @@ node("k3s") {
 
     stage('Deploy') {
 
-        // Complete the kubernetes deploy yaml file
+        // Complete kubernetes_deploy.yaml
         sh "sed -i 's/DEPLOYMENT_NAME/${env.deployment_name}/g' ./jenkins/kubernetes_deploy.yaml"
         sh "sed -i 's/APP_NAME/${env.app_name}/g' ./jenkins/kubernetes_deploy.yaml"
         sh "sed -i 's=IMAGE_NAME=${env.registry}/${env.image_name}:${env.BUILD_NUMBER}=g' \
             ./jenkins/kubernetes_deploy.yaml"
 
         // Delete old deployment
-        sh "kubectl delete ${env.deployment_name}"
+        sh "kubectl delete deployment ${env.deployment_name}"
         sh "sleep ${env.deploy_delay}"
 
-
-        // Apply the deployment to k3s cluster
+        // Apply new deployment to k3s cluster
         sh "kubectl apply -f ./jenkins/kubernetes_deploy.yaml"
         sh "kubectl get all"
     }
