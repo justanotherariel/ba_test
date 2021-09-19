@@ -59,6 +59,7 @@ node("k3s") {
         sh "sed -i 's/APP_NAME/${env.app_name}/g' ./jenkins/kubernetes_deploy.yaml"
         sh "sed -i 's=IMAGE_NAME=${env.registry}/${env.image_name}:${env.BUILD_NUMBER}=g' \
             ./jenkins/kubernetes_deploy.yaml"
+        sh "cat ./jenkins/kubernetes_deploy.yaml"   // Debug
 
         // Delete old deployment
         sh "kubectl delete deployment ${env.deployment_name}"
