@@ -4,6 +4,10 @@ env.registry = '10.0.0.20:5000'
 env.image_name = 'example/pi4j'
 env.image_architecture = 'linux/arm/v7'
 
+env.deployment_name = 'Pi4j Application'
+env.app_name = 'pi4j'
+env.deploy_delay = 60
+
 node {
     checkout scm
 
@@ -19,9 +23,10 @@ node {
 
     stage('Build Image'){
 
-        // Needed for multi-architecture builds. Sets up the qemu emulator
+        // Set up the qemu emulator (only needed for multi-arch builds)
         sh 'docker run --rm --privileged multiarch/qemu-user-static --reset -p yes'
 
+        // Build image with buildx
         sh "docker buildx build \
         --platform ${env.image_architecture} \
         -t distribution_image \
@@ -29,21 +34,37 @@ node {
     }
 
     stage('Push Image') {
-        sh "curl ${env.registry_protocol}${env.registry}/v2/${env.image_name}/tags/list"
-
-        sh "docker image tag distribution_image ${env.registry}/${env.image_name}:latest"
+        // Push image with Tag "latest"
+        sh "docker image tag distribution_image \
+            ${env.registry}/${env.image_name}:latest"
         sh "docker push ${env.registry}/${env.image_name}:latest"
 
-        sh "docker image tag distribution_image ${env.registry}/${env.image_name}:${env.BUILD_NUMBER}"
+        // Push image with Tag BUILD_NUMBER
+        sh "docker image tag distribution_image \
+            ${env.registry}/${env.image_name}:${env.BUILD_NUMBER}"
         sh "docker push ${env.registry}/${env.image_name}:${env.BUILD_NUMBER}"
 
+        // Check Repository if images were successfully pushed
         sh "curl ${env.registry_protocol}${env.registry}/v2/${env.image_name}/tags/list"
     }
 }
 
 node("k3s") {
+    checkout scm
+
     stage('Deploy') {
-        sh "kubectl apply -f /home/k3s/pi4j_k3s/pi4j-example-deployment.yaml"
+
+        // Complete the kubernetes deploy yaml file
+        sh "sed -i 's/DEPLOYMENT_NAME/${env.deployment_name}/g' ./jenkins/kubernetes_deploy.yaml"
+        sh "sed -i 's/APP_NAME/${env.app_name}/g' ./jenkins/kubernetes_deploy.yaml"
+        sh "sed -i 's/IMAGE_NAME/${env.registry}/${env.image_name}:${env.BUILD_NUMBER}/g' \
+            ./jenkins/kubernetes_deploy.yaml"
+
+        sh "cat ./jenkins/kubernetes_deploy.yaml"
+
+        // Apply the deployment to k3s cluster
+        sh "kubectl apply -f ./jenkins/kubernetes_deploy.yaml"
+        // sh "sleep ${env.deploy_delay}"
         sh "kubectl get all"
     }
 }
