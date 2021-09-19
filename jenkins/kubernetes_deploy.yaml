@@ -15,15 +15,15 @@ spec:
         app: APP_NAME
     spec:
       containers:
-      - name: APP_NAME
-        image: IMAGE_NAME
-        volumeMounts:
-          - mountPath: /dev/gpiomem
-            name: pi-gpio
-        securityContext:
-          privileged: true
-    volumes:
-      - name: pi-gpio
-        hostPath:
-          path: /dev/gpiomem
-    restartPolicy: Always
+        - name: APP_NAME
+          image: IMAGE_NAME
+          volumeMounts:
+            - mountPath: /dev/gpiomem
+              name: pi-gpio
+          securityContext:
+            privileged: true
+      volumes:
+        - name: pi-gpio
+          hostPath:
+            path: /dev/gpiomem
+      restartPolicy: Always
