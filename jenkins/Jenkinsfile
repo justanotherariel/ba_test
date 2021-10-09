@@ -1,12 +1,12 @@
+// Docker
 env.registry_protocol = 'http://'
 env.registry = '10.0.0.20:5000'
-
 env.image_name = 'example/pi4j'
 env.image_architecture = 'linux/arm/v7'
 
+// Kubernetes
 env.deployment_name = 'pi4j-deployment'
 env.app_name = 'pi4j'
-env.deploy_delay = 60
 
 node {
     checkout scm
