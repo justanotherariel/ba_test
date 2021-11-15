@@ -136,11 +136,11 @@ public class MinimalExample {
             if (led.equals(DigitalState.HIGH)) {
                 console.println("LED low");
                 led.low();
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } else {
                 console.println("LED high");
                 led.high();
-                Thread.sleep(1000);
+                Thread.sleep(500);
             }
         }
 
